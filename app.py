@@ -18,8 +18,13 @@ def home():
                     '/total_cases': "Total cases.",
                     '/most_efficient_state':"State that handled the covid most efficiently( total recovery/ total covid cases).",
                     '/least_efficient_state': "State that handled the covid least efficiently( total recovery/ total covid cases).",
+                    '/getcsvfile':"To export data to csv file at given path"
                     })
 
+@app.route('/getcsvfile') # defing the things to happen on /getcsvfile path
+def getcsvfile():
+    df.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("/Users/chakradhar/Desktop/results")
+    return jsonify({"Message":"Results stored succesfully to '/Users/chakradhar/Desktop/results' path"})
 @app.route('/most_affected_state') # defing the things to happen on /most_affected_state
 def get_most_affected_state():
     # Sorting the data frame as per given criteria in descending and selecting the top most record and state column
