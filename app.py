@@ -23,8 +23,10 @@ def home():
 
 @app.route('/getcsvfile') # defing the things to happen on /getcsvfile path
 def getcsvfile():
+    # Exporting the data into csv as single file
     df.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("/Users/chakradhar/Desktop/results")
-    return jsonify({"Message":"Results stored succesfully to '/Users/chakradhar/Desktop/results' path"})
+    return jsonify({"Message":"Results stored succesfully to '/Users/chakradhar/Desktop/results' path"}) # returning the success meassage jsonfied response
+  
 @app.route('/most_affected_state') # defing the things to happen on /most_affected_state
 def get_most_affected_state():
     # Sorting the data frame as per given criteria in descending and selecting the top most record and state column
