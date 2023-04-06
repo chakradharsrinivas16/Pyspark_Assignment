@@ -53,13 +53,13 @@ def get_total_cases():
 @app.route('/most_efficient_state') # defing the things to happen on /most_efficient_state
 def get_most_efficient_state():
     # Sorting the data frame as per given criteria in descending and selecting the top most record and state column
-    most_efficient_state=df.sort((df.cured.cast("Long")/df.total.cast("Long")).desc()).select(col("state")).collect()[0][0]
+    most_efficient_state=df.sort((df.cured.cast("Long")/df.confirm.cast("Long")).desc()).select(col("state")).collect()[0][0]
     return jsonify({'most efficient_state':most_efficient_state}) # returning the jsonfied response
 
 @app.route('/least_efficient_state') # defing the things to happen on /least_efficient_state
 def get_least_efficient_state():
     # Sorting the data frame as per given criteria in ascending and selecting the top most record and state column
-    least_efficient_state=df.sort((df.cured.cast("Long")/df.total.cast("Long")).asc()).select(col("state")).collect()[0][0]
+    least_efficient_state=df.sort((df.cured.cast("Long")/df.confirm.cast("Long")).asc()).select(col("state")).collect()[0][0]
     return jsonify({'least efficient_state':least_efficient_state}) # returning the jsonfied response
 
 if __name__ == '__main__':
