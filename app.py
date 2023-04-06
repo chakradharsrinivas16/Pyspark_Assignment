@@ -41,8 +41,8 @@ def get_highest_covid_cases():
 @app.route('/least_covid_cases') # defing the things to happen on /least_covid_cases
 def get_least_covid_cases():
     # Sorting the data frame as per given criteria in acending and selecting the top most record and state column
-    get_least_covid_cases=df.sort(df.confirm.cast("Long")).select(col("state")).collect()[0][0]
-    return jsonify({'get_least_covid_cases':get_least_covid_cases}) # returning the jsonfied response
+    least_covid_cases=df.sort(df.confirm.cast("Long")).select(col("state")).collect()[0][0]
+    return jsonify({'get_least_covid_cases':least_covid_cases}) # returning the jsonfied response
 
 @app.route('/total_cases') # defing the things to happen on /total_cases
 def get_total_cases():
