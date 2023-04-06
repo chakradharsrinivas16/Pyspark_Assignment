@@ -18,6 +18,7 @@ def get_data():
 
 The get_data() function sends an HTTP GET request to the "https://covid-19-india2.p.rapidapi.com/details.php" endpoint using the requests library. It sets headers with the API key and host. The function returns the response object.
 
+
 ```
 def clean_data(df):
     df=df.drop('_corrupt_record') # droping the _corrupt_record column
@@ -33,7 +34,9 @@ def clean_data(df):
 
 The clean_data() function accepts a PySpark dataframe as an argument. It drops the _corrupt_record column and filters records where the state column is not null or empty. It then casts the confirm, cured, and death columns to Long type using the withColumn() method. The function then rearranges the columns to make them more readable and strips asterisks from the end of state names using the regexp_replace() method. Finally, it returns the cleaned dataframe.
 
+
 we wrote a driver code which cn=onnects data and these function onorder to obtain a clean and consice output, the below is the snippet.
+
 ```
 spark = SparkSession.builder.master('local[*]').getOrCreate() # Creating a spark session
 sc = SparkContext.getOrCreate() # creating a Spark context
@@ -70,6 +73,7 @@ def home():
                     '/least_efficient_state': "State that handled the covid least efficiently( total recovery/ total covid cases).",
                     })
 ```
+
 It then uses the route() decorator to specify the URL route of the function that should handle HTTP requests. In this case, it specifies that the function to handle the root URL should be executed when the client requests the '/' route.
 The home() function is defined as the route handler for the '/' route. When the client requests the root URL, it returns a JSON object that provides information about other routes that the user can access. This JSON object provides descriptions of several other routes that can be used to query the COVID-19 data, such as the most affected state, least affected state, highest COVID-19 cases, and so on.
 
@@ -81,6 +85,7 @@ def get_most_affected_state():
     return jsonify({'most_affected_state': most_affected_state})  # returning the jsonfied response
 
 ```
+
 This function defines the behavior of the Flask app when the user requests the endpoint "/most_affected_state". It calculates the most affected state among all the states by sorting the DataFrame based on the ratio of total deaths to total COVID-19 cases in each state, and then selecting the state with the highest ratio. It returns a JSON object with the name of the most affected state.
 
 ```
@@ -90,6 +95,7 @@ def get_least_affected_state():
     least_affected_state=df.sort((df.death.cast("Long")/df.confirm.cast("Long"))).select(col("state")).collect()[0][0]
     return jsonify({'least_affected_state': least_affected_state}) # returning the jsonfied response
 ```
+
 This function handles a GET request to the '/least_affected_state' endpoint. It sorts the 'df' DataFrame based on the ratio of deaths to total confirmed cases in ascending order, selects the state column of the topmost record, and assigns it to the 'least_affected_state' variable. Finally, it returns the state with the least number of deaths per confirmed cases as a JSON object.
 
 ```
@@ -99,6 +105,7 @@ def get_highest_covid_cases():
     highest_covid_cases=df.sort((df.confirm).cast("Long").desc()).select(col("state")).collect()[0][0]
     return jsonify({'get_highest_covid_cases':highest_covid_cases}) # returning the jsonfied response
 ```
+
 The get_highest_covid_cases function retrieves the state with the highest number of confirmed COVID-19 cases in India from the Spark dataframe df, sorts the dataframe in descending order based on the number of confirmed cases, selects the state column of the first record, and returns the result as a JSON object. This function is associated with the /highest_covid_cases route in the Flask application, so when a user sends a GET request to this route, the function is executed and returns the result as a response.
 
 ```
@@ -108,6 +115,7 @@ def get_least_covid_cases():
     least_covid_cases=df.sort(df.confirm.cast("Long")).select(col("state")).collect()[0][0]
     return jsonify({'get_least_covid_cases':least_covid_cases}) # returning the jsonfied response
 ```
+
 This function returns the state with the least number of COVID cases. It sorts the dataframe by the number of confirmed cases in ascending order and selects the state with the least number of cases, which is the first record in the sorted dataframe. The state name is then returned as a JSON object with the key 'get_least_covid_cases'.
 
 ```
@@ -117,6 +125,7 @@ def get_total_cases():
     total_cases=df.select(sum(df.confirm).alias("Total cases")).collect()[0][0]
     return jsonify({'Total Cases':total_cases}) # returning the jsonfied response
 ```
+
 The function get_total_cases() returns the total number of COVID-19 cases in all states of India by summing the values in the confirm column of the DataFrame df. It uses the select method of the DataFrame to compute the sum and assigns it a label "Total cases" using the alias method. Finally, the function returns a JSON-serialized dictionary containing the label and the sum as its value.
 
 ```
@@ -127,9 +136,11 @@ def get_most_efficient_state():
     return jsonify({'most efficient_state':most_efficient_state}) # returning the jsonfied response
 
 ```
+
 The get_most_efficient_state() function is defined to handle the GET request on the '/most_efficient_state' endpoint.
 
 This function calculates the efficiency of each state in handling COVID by computing the ratio of the number of people cured to the number of confirmed cases for each state, sorts the DataFrame in descending order based on this ratio, and selects the state with the highest efficiency. Finally, it returns a JSON response with the state with the highest efficiency as the value of the 'most efficient_state' key.
+
 
 ```
 @app.route('/least_efficient_state') # defing the things to happen on /least_efficient_state
@@ -140,9 +151,8 @@ def get_least_efficient_state():
 
 ```
 
+
 This route defines a function to get the least efficient state in terms of COVID-19 recovery rate. The function sorts the DataFrame by dividing the number of cured cases by the number of confirmed cases, sorts the result in ascending order and selects the state with the lowest recovery rate as the least efficient state. Finally, it returns a JSON object containing the name of the least efficient state.
-
-
 
 ### Test run - 
 #### Cleaned Dataframe
