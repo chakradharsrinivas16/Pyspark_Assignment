@@ -81,7 +81,7 @@ The home() function is defined as the route handler for the '/' route. When the 
 @app.route('/most_affected_state') # defing the things to happen on /most_affected_state
 def get_most_affected_state():
     # Sorting the data frame as per given criteria in descending and selecting the top most record and state column
-    most_affected_state=df.sort((df.death.cast("Long")/df.confirm.cast("Long")).desc()).select(col("state")).collect()[0][0]
+    most_affected_state=df.sort((df.death/df.confirm).desc()).select(col("state")).collect()[0][0]
     return jsonify({'most_affected_state': most_affected_state})  # returning the jsonfied response
 
 ```
@@ -92,7 +92,7 @@ This function defines the behavior of the Flask app when the user requests the e
 @app.route('/least_affected_state') # defing the things to happen on /least_affected_state
 def get_least_affected_state():
     # Sorting the data frame as per given criteria in ascending and selecting the top most record and state column
-    least_affected_state=df.sort((df.death.cast("Long")/df.confirm.cast("Long"))).select(col("state")).collect()[0][0]
+    least_affected_state=df.sort((df.death/df.confirm)).select(col("state")).collect()[0][0]
     return jsonify({'least_affected_state': least_affected_state}) # returning the jsonfied response
 ```
 
@@ -102,7 +102,7 @@ This function handles a GET request to the '/least_affected_state' endpoint. It 
 @app.route('/highest_covid_cases') # defing the things to happen on /highest_covid_cases
 def get_highest_covid_cases():
     # Sorting the data frame as per given criteria in descneding and selecting the top most record and state column
-    highest_covid_cases=df.sort((df.confirm).cast("Long").desc()).select(col("state")).collect()[0][0]
+    highest_covid_cases=df.sort((df.confirm).desc()).select(col("state")).collect()[0][0]
     return jsonify({'get_highest_covid_cases':highest_covid_cases}) # returning the jsonfied response
 ```
 
@@ -112,7 +112,7 @@ The get_highest_covid_cases function retrieves the state with the highest number
 @app.route('/least_covid_cases') # defing the things to happen on /least_covid_cases
 def get_least_covid_cases():
     # Sorting the data frame as per given criteria in acending and selecting the top most record and state column
-    least_covid_cases=df.sort(df.confirm.cast("Long")).select(col("state")).collect()[0][0]
+    least_covid_cases=df.sort(df.confirm).select(col("state")).collect()[0][0]
     return jsonify({'get_least_covid_cases':least_covid_cases}) # returning the jsonfied response
 ```
 
@@ -122,7 +122,7 @@ This function returns the state with the least number of COVID cases. It sorts t
 @app.route('/total_cases') # defing the things to happen on /total_cases
 def get_total_cases():
     # Suming the data frame as per given criteria and selecting the sum.
-    total_cases=df.select(sum(df.confirm).alias("Total cases")).collect()[0][0]
+    total_cases=df.select(sum(df.total).alias("Total cases")).collect()[0][0]
     return jsonify({'Total Cases':total_cases}) # returning the jsonfied response
 ```
 
@@ -132,7 +132,7 @@ The function get_total_cases() returns the total number of COVID-19 cases in all
 @app.route('/most_efficient_state') # defing the things to happen on /most_efficient_state
 def get_most_efficient_state():
     # Sorting the data frame as per given criteria in descending and selecting the top most record and state column
-    most_efficient_state=df.sort((df.cured.cast("Long")/df.confirm.cast("Long")).desc()).select(col("state")).collect()[0][0]
+    most_efficient_state=df.sort((df.cured/df.confirm).desc()).select(col("state")).collect()[0][0]
     return jsonify({'most efficient_state':most_efficient_state}) # returning the jsonfied response
 
 ```
@@ -146,13 +146,22 @@ This function calculates the efficiency of each state in handling COVID by compu
 @app.route('/least_efficient_state') # defing the things to happen on /least_efficient_state
 def get_least_efficient_state():
     # Sorting the data frame as per given criteria in ascending and selecting the top most record and state column
-    least_efficient_state=df.sort((df.cured.cast("Long")/df.confirm.cast("Long")).asc()).select(col("state")).collect()[0][0]
+    least_efficient_state=df.sort((df.cured/df.confirm).asc()).select(col("state")).collect()[0][0]
     return jsonify({'least efficient_state':least_efficient_state}) # returning the jsonfied response
 
 ```
 
 
 This route defines a function to get the least efficient state in terms of COVID-19 recovery rate. The function sorts the DataFrame by dividing the number of cured cases by the number of confirmed cases, sorts the result in ascending order and selects the state with the lowest recovery rate as the least efficient state. Finally, it returns a JSON object containing the name of the least efficient state.
+
+```
+@app.route('/getcsvfile') # defing the things to happen on /getcsvfile path
+def getcsvfile():
+    df.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save(desktop+str(datetime.now()))
+    return jsonify({"Message":"Results stored succesfully to "+desktop+str(datetime.now())+"' path"})
+
+```
+This route defines a function that allows users to retrieve a CSV file generated from a PySpark DataFrame called df. The code writes the DataFrame to a CSV file using the Databricks CSV format with column headers, and stores it to a specified path on the local machine. The code then returns a JSON response indicating that the CSV file has been successfully stored to the specified path.
 
 ### Test run - 
 #### Cleaned Dataframe
