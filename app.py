@@ -5,6 +5,9 @@ from flask import Flask, jsonify
 from dataframe import df # Fecthing the dataframe created in other file.
 from pyspark.sql.functions import sum
 from datetime import datetime
+import os
+desktop = os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop')+"/results" 
+
 
  
 print("Below is the data after cleaning and creation of dataframe :-\n")
@@ -25,8 +28,8 @@ def home():
 
 @app.route('/getcsvfile') # defing the things to happen on /getcsvfile path
 def getcsvfile():
-    df.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("/Users/chakradhar/Desktop/results "+str(datetime.now()))
-    return jsonify({"Message":"Results stored succesfully to '/Users/chakradhar/Desktop/results"+str(datetime.now())+"' path"})
+    df.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save(desktop+str(datetime.now()))
+    return jsonify({"Message":"Results stored succesfully to "+desktop+str(datetime.now())+"' path"})
 
 @app.route('/most_affected_state') # defing the things to happen on /most_affected_state
 def get_most_affected_state():
