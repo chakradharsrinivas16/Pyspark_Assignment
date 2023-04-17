@@ -13,6 +13,7 @@ desktop = os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop')+"/resul
 print("Below is the data after cleaning and creation of dataframe :-\n")
 df.show(36) # Displaying the above fetched dataframe
 app = Flask(__name__) # creating a app from flask
+
 @app.route('/') # defing the things to happen on home path
 def home():
     # returning the jsonfied index
@@ -58,7 +59,7 @@ def get_least_covid_cases():
 @app.route('/total_cases') # defing the things to happen on /total_cases
 def get_total_cases():
     # Suming the data frame as per given criteria and selecting the sum.
-    total_cases=df.select(sum(df.confirm).alias("Total cases")).collect()[0][0]
+    total_cases=df.select(sum(df.total).alias("Total cases")).collect()[0][0]
     return jsonify({'Total Cases':total_cases}) # returning the jsonfied response
     
 @app.route('/most_efficient_state') # defing the things to happen on /most_efficient_state
