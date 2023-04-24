@@ -11,7 +11,7 @@ desktop = os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop')+"/resul
 
  
 print("Below is the data after cleaning and creation of dataframe :-\n")
-df.show(36) # Displaying the above fetched dataframe
+df.show() # Displaying the above fetched dataframe
 app = Flask(__name__) # creating a app from flask
 
 @app.route('/') # defing the things to happen on home path
